@@ -1,0 +1,18 @@
+website/dist/
+
+# Node
+node_modules/
+
+# Python virtual env
+infra_py/.venv/
+
+# AWS CDK
+cdk.out/
+cdk.context.json
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/

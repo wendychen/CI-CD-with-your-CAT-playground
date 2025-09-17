@@ -23,15 +23,6 @@ from constructs import Construct
 
 
 class WebsiteStack(cdk.Stack):
-    """
-    🌟 靜態網站部署 Stack（S3-only）🌟
-
-    這個 stack 會建立一個好懂、好用的 S3 靜態網站環境：
-    - 🗄️ S3 靜態網站託管（直接用 S3 當網站主機）
-    - 🤖 自動化部署流程（一鍵同步前端資產）
-
-    超適合入門與教學的工作坊！🎓
-    """
     
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
@@ -39,7 +30,7 @@ class WebsiteStack(cdk.Stack):
         # ========================================
         # 🎯 步驟 1: 建立 S3 靜態網站 Bucket
         # ========================================
-        # S3 就是你的網站小主機 🏠
+        # S3 就是你的網站小Server 🏠
         # 這裡我們直接啟用「靜態網站託管」，讓瀏覽器能透過 S3 網站端點讀取內容
         # 小提醒：S3 靜態網站端點僅支援 HTTP，因此不要設定 enforce_ssl
         website_bucket = s3.Bucket(
@@ -57,11 +48,22 @@ class WebsiteStack(cdk.Stack):
         # ========================================
         # 一鍵把 build 好的網站同步到 S3，超方便！
         # 路徑預設為 ../website/dist（請先在 website/ 內執行 npm run build）
-        s3deploy.BucketDeployment(
-            self,
-            "DeployWebsiteAssets",
-            destination_bucket=website_bucket,
-            sources=[s3deploy.Source.asset("../website/dist")],
+        
+        # 1) index.html/靜態資源 (不快取)
+        s3deploy.BucketDeployment(self, "Html",
+            destination_bucket=bucket,
+            sources=[s3deploy.Source.asset("./website/dist",
+                include=["index.html"])],
+            cache_control=[s3deploy.CacheControl.no_cache()]
+        )
+
+        # 2) config.json (不快取 + JSON)
+        s3deploy.BucketDeployment(self, "Config",
+            destination_bucket=bucket,
+            sources=[s3deploy.Source.asset("./website/config.json",
+                include=["config.json"])],
+            cache_control=[s3deploy.CacheControl.no_cache()],
+            content_type="application/json"
         )
 
 
