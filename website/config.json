@@ -1,9 +1,9 @@
 {
   "title": "🎉 AWS 社群日 - CDK 工作坊",
   "subtitle": "修改 config.json -> 推送觸發 CI/CD -> 取得新的網頁！",
-  "theme": "dark",
+  "theme": "neon",
   "stageTitle": "我是貓",
-  "rightPanel": "calculator",
+  "rightPanel": "editor",
   "width": 400,
   "height": 300
 }
