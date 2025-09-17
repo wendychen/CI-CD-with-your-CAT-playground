@@ -1,115 +1,67 @@
+"""
+🎉 歡迎來到 AWS CDK 工作坊！🎉
+
+這個 stack 會幫你建立一個超棒的「S3 靜態網站」解決方案（無 CloudFront/OAC）：
+- 🗄️ S3 靜態網站託管：直接用 S3 提供網站內容
+- 🚀 自動部署：前端 build 後自動同步到 S3
+
+今天你會學到：
+1. 🔒 如何設定 S3 靜態網站託管
+2. 🗂️ 如何讓網站頁面正確回應（index.html / 錯誤頁）
+3. 🤖 使用 CDK 自動部署前端資產到 S3
+
+準備好了嗎？讓我們開始吧！✨
+"""
+
 from typing import Optional
 import aws_cdk as cdk
 from aws_cdk import (
-    Duration,
     aws_s3 as s3,
-    aws_iam as iam,
-    aws_cloudfront as cloudfront,
     aws_s3_deployment as s3deploy,
 )
 from constructs import Construct
 
 
 class WebsiteStack(cdk.Stack):
+    """
+    🌟 靜態網站部署 Stack（S3-only）🌟
+
+    這個 stack 會建立一個好懂、好用的 S3 靜態網站環境：
+    - 🗄️ S3 靜態網站託管（直接用 S3 當網站主機）
+    - 🤖 自動化部署流程（一鍵同步前端資產）
+
+    超適合入門與教學的工作坊！🎓
+    """
+    
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # TODO: 建立 S3 儲存桶
-        # 提示：使用 s3.Bucket，設定為私有（block_public_access），強制 HTTPS
+        # ========================================
+        # 🎯 步驟 1: 建立 S3 靜態網站 Bucket
+        # ========================================
+        # S3 就是你的網站小主機 🏠
+        # 這裡我們直接啟用「靜態網站託管」，讓瀏覽器能透過 S3 網站端點讀取內容
+        # 小提醒：S3 靜態網站端點僅支援 HTTP，因此不要設定 enforce_ssl
         website_bucket = s3.Bucket(
             self,
             "WebsiteBucket",
-            # 請在此填入適當的參數
-            # block_public_access=?
-            # enforce_ssl=?
-            # encryption=?
+            website_index_document="index.html",  # 首頁檔案
+            website_error_document="index.html",  # SPA/錯誤回到首頁
+            public_read_access=True,               # 對外可讀（CDK 會自動加上公開讀取的 Bucket Policy）
+            block_public_access=s3.BlockPublicAccess.BLOCK_ACLS,  # 使用 Policy 控制公開權限
+            encryption=s3.BucketEncryption.S3_MANAGED,            # 基本加密，簡單安全
         )
 
-        # TODO: 建立 CloudFront Origin Access Control (OAC)
-        # 提示：使用 cloudfront.CfnOriginAccessControl，設定為 S3 類型，使用 SigV4
-        oac = cloudfront.CfnOriginAccessControl(
-            self,
-            "WebsiteOAC",
-            origin_access_control_config=cloudfront.CfnOriginAccessControl.OriginAccessControlConfigProperty(
-                # 請填入適當的參數
-                # name=?
-                # origin_access_control_origin_type=?
-                # signing_behavior=?
-                # signing_protocol=?
-            ),
-        )
-
-        # TODO: 建立 CloudFront Distribution
-        # 提示：使用 cloudfront.CfnDistribution，設定預設首頁、快取行為、來源
-        distribution = cloudfront.CfnDistribution(
-            self,
-            "WebsiteDistribution",
-            distribution_config=cloudfront.CfnDistribution.DistributionConfigProperty(
-                # 基本設定
-                # enabled=?
-                # default_root_object=?
-                # http_version=?
-                # price_class=?
-                
-                # 快取行為
-                default_cache_behavior=cloudfront.CfnDistribution.DefaultCacheBehaviorProperty(
-                    # target_origin_id=?
-                    # viewer_protocol_policy=?
-                    # allowed_methods=?
-                    # cached_methods=?
-                    # compress=?
-                    # forwarded_values=?
-                    # min_ttl=?
-                    # default_ttl=?
-                    # max_ttl=?
-                ),
-                
-                # 來源設定
-                origins=[
-                    cloudfront.CfnDistribution.OriginProperty(
-                        # domain_name=?
-                        # id=?
-                        # s3_origin_config=?
-                        # origin_access_control_id=?
-                    )
-                ],
-            ),
-        )
-
-        # TODO: 建立 CloudFront Distribution ARN
-        # 提示：使用 cdk.Fn.join 組合 ARN 字串
-        distribution_arn = cdk.Fn.join(
-            "",
-            [
-                # 請填入 ARN 的各個部分
-                # "arn:aws:cloudfront::",
-                # cdk.Stack.of(self).account,
-                # ":distribution/",
-                # distribution.attr_id,
-            ],
-        )
-
-        # TODO: 設定 S3 儲存桶政策，允許 CloudFront 存取
-        # 提示：使用 website_bucket.add_to_resource_policy 和 iam.PolicyStatement
-        website_bucket.add_to_resource_policy(
-            iam.PolicyStatement(
-                # sid=?
-                # actions=?
-                # resources=?
-                # principals=?
-                # conditions=?
-            )
-        )
-
-        # TODO: 部署網站資產到 S3
-        # 提示：使用 s3deploy.BucketDeployment，來源為 "../website/dist"
+        # ========================================
+        # 🚀 步驟 2: 部署前端資產到 S3
+        # ========================================
+        # 一鍵把 build 好的網站同步到 S3，超方便！
+        # 路徑預設為 ../website/dist（請先在 website/ 內執行 npm run build）
         s3deploy.BucketDeployment(
             self,
             "DeployWebsiteAssets",
-            # destination_bucket=?
-            # sources=?
-            # distribution=?
-            # distribution_paths=?
+            destination_bucket=website_bucket,
+            sources=[s3deploy.Source.asset("../website/dist")],
         )
 
 

@@ -1,10 +1,10 @@
-name: Deploy Website with CDK
+name: Deploy Website to S3 (CI/CD)
 
 on:
   push:
     branches: [ main, master ]
     paths:
-      - 'infra/**'
+      - 'infra_py/**'
       - 'website/**'
       - '.github/workflows/deploy.yml'
 
@@ -30,28 +30,24 @@ jobs:
           npm ci
           npm run build
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.DEPLOY_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
 
-      - name: Install CDK deps (Python)
-        working-directory: infra_py
+      - name: Sync assets to S3 (website/dist → s3://$S3_BUCKET)
+        env:
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
         run: |
-          python -m venv .venv
-          source .venv/bin/activate
-          pip install -r requirements.txt
-
-      - name: Deploy with CDK (Python)
-        working-directory: infra_py
-        run: |
-          source .venv/bin/activate
-          cdk deploy --require-approval never
+          if [ -z "$S3_BUCKET" ]; then echo "S3_BUCKET secret is required" && exit 1; fi
+          aws s3 sync website/dist s3://$S3_BUCKET --delete --only-show-errors \
+            --cache-control "public, max-age=300" \
+            --exclude "*.html"
+          # HTML 檔案不快取（避免舊版頁面）
+          aws s3 sync website/dist s3://$S3_BUCKET --only-show-errors \
+            --cache-control "no-cache, no-store, must-revalidate" \
+            --content-type "text/html; charset=utf-8" \
+            --exclude "*" --include "*.html"
 
 
