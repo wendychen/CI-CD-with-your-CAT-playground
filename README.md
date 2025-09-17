@@ -93,25 +93,20 @@ git push origin main
 # 🎉 GitHub Actions 自動部署！
 ```
 
-## 🧹 清理資源
+## 🧹 Clean up
 ```bash
 cd infra_py
 cdk destroy --force   # 刪除所有 AWS 資源
 ```
 
-## 🎯 進階挑戰
-
-完成基礎版本後，試試這些挑戰：
-- 🌐 **自訂網域**：加上 Route 53 + ACM 憑證
-- ⚡ **效能優化**：調整 CloudFront 快取政策
-- 🛡️ **安全強化**：加入 WAF 或安全標頭
-- 🧪 **測試自動化**：在 CI/CD 中加入測試步驟
-- 📊 **監控告警**：設定 CloudWatch 監控
-
-## 💡 小貼士
+## 💡 Tips
 - 使用 `cdk synth` 檢查 CloudFormation 模板
 - 用 `cdk diff` 查看變更內容
 - 遇到問題時查看 CloudFormation 事件日誌
+
+## 🙏 致謝
+
+感謝 [placecat.com](https://placecat.com) 提供可愛的貓咪圖片素材，讓我們的網站更加生動有趣！🐱
 
 ---
 
