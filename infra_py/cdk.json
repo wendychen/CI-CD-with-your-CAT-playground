@@ -1,0 +1,9 @@
+{
+  "app": "python app.py",
+  "context": {
+    "@aws-cdk/core:stackRelativeExports": true,
+    "@aws-cdk/aws-cloudfront:defaultSecurityPolicyTLSv1_2_2021": true
+  }
+}
+
+

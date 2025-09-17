@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AWS CDK Workshop Site</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header>
+      <h1 id="title">🎉 AWS 社群日 - CDK 工作坊 Demo</h1>
+      <p id="subtitle">修改 config.json -> 推送觸發 CI/CD -> 取得新的網頁！</p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2 id="stage-title">Placecat Demo</h2>
+        <div class="layout">
+          <div class="stage-frame">
+            <div id="stage" class="stage">
+              <img id="cat" alt="cat" />
+            </div>
+          </div>
+          <div class="stage-right" id="stage-right"></div>
+      </section>
+    </div>
+    <div class="panel sidebar" id="sidebar-panel" aria-hidden="false">
+      <div class="panel-header"><button id="sidebar-toggle" class="sidebar-toggle" aria-expanded="true">收合</button></div>
+      <div>目前尺寸：<span id="size"></span></div>
+      <div class="url"><code id="url"></code></div>
+      <div class="controls">
+        <label>W <input id="w-input" type="number" min="50" max="1200" placeholder="50-1200" title="建議 50-1200 px"></label>
+        <label>H <input id="h-input" type="number" min="50" max="800" placeholder="50-800" title="建議 50-800 px"></label>
+        <button id="preview">預覽</button>
+        <button id="copy-json">複製 config.json</button>
+      </div>
+      <div class="helper">建議範圍：寬 50–1200、 高 50–800（px）</div>
+      <div id="msg" class="msg" aria-live="polite"></div>
+    </div>
+    <button id="sidebar-reveal" class="sidebar-reveal" aria-expanded="false" style="display:none">展開</button>
+  </div>
+    </main>
+
+    <footer>
+      <a href="https://aws.amazon.com/cdk/" target="_blank" rel="noopener">了解 AWS CDK</a>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+  </html>
+
+
