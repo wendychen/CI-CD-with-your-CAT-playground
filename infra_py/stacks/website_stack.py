@@ -51,7 +51,7 @@ class WebsiteStack(cdk.Stack):
         
         # 1) index.html/靜態資源 (不快取)
         s3deploy.BucketDeployment(self, "Html",
-            destination_bucket=bucket,
+            destination_bucket=website_bucket,
             sources=[s3deploy.Source.asset("./website/dist",
                 include=["index.html"])],
             cache_control=[s3deploy.CacheControl.no_cache()]
@@ -59,7 +59,7 @@ class WebsiteStack(cdk.Stack):
 
         # 2) config.json (不快取 + JSON)
         s3deploy.BucketDeployment(self, "Config",
-            destination_bucket=bucket,
+            destination_bucket=website_bucket,
             sources=[s3deploy.Source.asset("./website/config.json",
                 include=["config.json"])],
             cache_control=[s3deploy.CacheControl.no_cache()],
