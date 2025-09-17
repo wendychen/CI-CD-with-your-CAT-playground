@@ -1,54 +1,118 @@
-# AWS CDK Workshop - S3 + CloudFront (OAC) + GitHub Actions
+# 🎉 歡迎來到 AWS CDK 工作坊！
 
-本專案提供一個輕量又有趣的網站，適合在工作坊中體驗以 CDK 部署 S3 靜態網站並透過 CloudFront OAC 安全存取，同時搭配 GitHub Actions 進行 CI/CD。
+> 一起來建立一個可愛的貓咪網站，學習 S3 + CloudFront (OAC) + GitHub Actions 的完整部署流程！
 
-## 架構重點
-- S3 私有儲存桶 (Block Public Access, 強制 TLS)
-- CloudFront Distribution 以 OAC 讀取 S3 (SigV4)
-- CDK 自動部署 `website/` 資產至 S3
-- GitHub Actions 以 OIDC 配置角色，自動執行 `cdk deploy`
+## 🌟 這個工作坊會學到什麼？
 
-## 先決條件
-- Node.js 18+（建議 20）
-- 已安裝 AWS CLI 並完成 `aws configure`
-- 已安裝 CDK CLI：`npm i -g aws-cdk`
+- **AWS CDK**：用 Python 程式碼定義基礎設施
+- **S3 + CloudFront OAC**：建立安全的靜態網站託管
+- **GitHub Actions**：自動化 CI/CD 部署流程
+- **前端開發**：Vite + 主題切換 + 可愛的貓咪功能
 
-## 本機部署步驟（Python 版 CDK）
+## 🏗️ 架構亮點
+- 🔒 **S3 私有儲存桶**：安全第一，禁止公開存取
+- ⚡ **CloudFront OAC**：使用 SigV4 安全存取 S3
+- 🚀 **自動部署**：CDK 一鍵部署網站資產
+- 🔄 **CI/CD 流程**：GitHub Actions 自動化部署
+
+## 🛠️ 開始之前
+
+請確保你的環境已準備好：
+- ✅ **Node.js 18+**（建議 20）
+- ✅ **AWS CLI** 已安裝並完成 `aws configure`
+- ✅ **CDK CLI**：`npm i -g aws-cdk`
+- ✅ **Python 3.8+**
+
+## 🚀 快速開始
+
+### 1️⃣ 本機開發
 ```bash
+# 啟動前端開發伺服器
 cd website
 npm install
-npm run dev   # 本機開發伺服器 (http://localhost:5173)
+npm run dev   # 🌐 開啟 http://localhost:5173
+```
 
-# 另開一個終端機以部署
+### 2️⃣ 部署到 AWS
+```bash
+# 另開一個終端機
 cd infra_py
 python -m venv .venv
 .venv\Scripts\activate   # Windows PowerShell
 pip install -r requirements.txt
-cdk bootstrap   # 首次於該帳號/區域使用 CDK 必跑
+
+# 首次部署需要 bootstrap
+cdk bootstrap   # 🎯 只在第一次執行
+
+# 建置並部署
 cd ../website
-npm run build   # 產出 website/dist
+npm run build   # 📦 產出 dist 資料夾
 cd ../infra_py
-cdk deploy --require-approval never
+cdk deploy --require-approval never   # 🚀 部署到 AWS
 ```
-完成後，於輸出中找到 CloudFront 網域，開啟瀏覽器即可看到網站。
 
-## GitHub Actions 設定
-1. 建立一個可被 GitHub OIDC 假設的 IAM 角色，並將 ARN 放到 repo secrets：`DEPLOY_ROLE_ARN`。
-2. 設定 `AWS_REGION`（若不設預設 `us-east-1`）。
-3. 推送到 `main`/`master` 分支會自動部署（Workflow 已改為使用 `infra_py/`）。
+🎉 **完成！** 在輸出中找到 CloudFront 網域，開啟瀏覽器就能看到你的貓咪網站了！
 
-## 以 CI/CD 更新 Placecat 圖片尺寸
-- 編輯 `website/config.json` 的 `width`、`height`。
-- 提交並推送到 `main`/`master`。
-- Actions 自動觸發部署，CloudFront 發布後重新整理頁面即可看到新尺寸圖片。
+## 🎨 自訂你的貓咪網站
 
-## 清理
+### 透過 config.json 輕鬆調整
+編輯 `website/config.json` 來客製化你的網站：
+
+```json
+{
+  "title": "🎉 我的貓咪網站",
+  "subtitle": "歡迎來到我的工作坊！",
+  "theme": "neon",           // light, dark, neon, retro
+  "stageTitle": "貓咪展示區",
+  "rightPanel": "calculator", // editor 或 calculator
+  "width": 640,
+  "height": 480
+}
+```
+
+### 🐱 可愛功能
+- **主題切換**：4 種精美主題（亮色、暗色、霓虹、復古）
+- **喵喵編輯器**：打字會變成喵喵語
+- **貓咪計算機**：按什麼都顯示 MEOW
+- **即時預覽**：調整圖片尺寸立即看到效果
+
+## 🔄 自動化部署 (GitHub Actions)
+
+### 設定步驟
+1. 🔐 建立 GitHub OIDC IAM 角色
+2. 📝 將角色 ARN 加入 repo secrets：`DEPLOY_ROLE_ARN`
+3. 🌍 設定 `AWS_REGION`（預設 us-east-1）
+4. 🚀 推送到 `main`/`master` 自動部署
+
+### 工作流程
 ```bash
-cd infra
-npm run destroy
+# 修改 config.json
+git add website/config.json
+git commit -m "更新貓咪尺寸"
+git push origin main
+# 🎉 GitHub Actions 自動部署！
 ```
 
-## 進階練習想法
-- 加上自訂網域與 ACM 憑證
-- 調整快取政策與 Error Pages（SPA 404 -> index.html）
-- 在 Actions 加上建置步驟或測試
+## 🧹 清理資源
+```bash
+cd infra_py
+cdk destroy --force   # 刪除所有 AWS 資源
+```
+
+## 🎯 進階挑戰
+
+完成基礎版本後，試試這些挑戰：
+- 🌐 **自訂網域**：加上 Route 53 + ACM 憑證
+- ⚡ **效能優化**：調整 CloudFront 快取政策
+- 🛡️ **安全強化**：加入 WAF 或安全標頭
+- 🧪 **測試自動化**：在 CI/CD 中加入測試步驟
+- 📊 **監控告警**：設定 CloudWatch 監控
+
+## 💡 小貼士
+- 使用 `cdk synth` 檢查 CloudFormation 模板
+- 用 `cdk diff` 查看變更內容
+- 遇到問題時查看 CloudFormation 事件日誌
+
+---
+
+**準備好了嗎？讓我們開始建立你的貓咪網站吧！** 🐱✨
