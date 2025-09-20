@@ -78,12 +78,10 @@ cdk deploy --require-approval never   # 🚀 建立 S3 與靜態網站設定
 ## 🔄 自動化部署 (GitHub Actions)
 
 ### 設定步驟
-1. 🔐 建立可被 GitHub OIDC 假設的 IAM 角色（具備 `s3:PutObject`, `s3:DeleteObject`, `s3:ListBucket`）
+1. 🔐 建立可被 GitHub OIDC 使用的 IAM 角色 (設定細節請進入 infra_py 查看裡面的 README 流程!)
 2. 📝 在 repo secrets 設定：
    - `DEPLOY_ROLE_ARN`：上一步建立的角色 ARN
-   - `AWS_REGION`：如 `us-east-1`
-   - `S3_BUCKET`：你的網站 Bucket 名稱
-3. 🚀 推送到 `main`/`master` 會自動：build 前端 → `aws s3 sync` 到 S3
+3. 🚀 推送到 `main`/`master` 會自動開始部屬流程！
 
 ### 工作流程
 ```bash
@@ -91,7 +89,6 @@ cdk deploy --require-approval never   # 🚀 建立 S3 與靜態網站設定
 git add website/config.json
 git commit -m "更新貓咪尺寸"
 git push origin main
-# 🎉 GitHub Actions：npm ci && npm run build && aws s3 sync website/dist s3://$S3_BUCKET --delete
 ```
 
 ## 🧹 Clean up

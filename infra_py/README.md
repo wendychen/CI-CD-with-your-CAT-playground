@@ -35,9 +35,10 @@ cdk deploy --require-approval never
 GitHub Workflow 是一份 YAML 設定檔，描述「何時」與「如何」自動執行你的流程（例如：push 後自動 build 與部署）。我們會用 GitHub OIDC 讓 Workflow 以臨時角色登入 AWS，免去長期金鑰設定。
 
 ## 2. 今天的任務（依序完成即可）
-- 準備 GitHub Repo：把專案放到 GitHub（fork 或新建 repo 皆可）。
-- 需要建立自己的repo 來填入 OIDC 的 Trust Policy!
-- 到`https://github.com/new` 創建你的repo
+- 到`https://github.com/Archong-Liu/CI-CD-with-your-CAT-playground` 將repo給fork下來！
+- Open new folder 並 `git clone https://github.com/你的GitHub User name/CI-CD-with-your-CAT-playground`
+
+> 能看到本檔案代表以上你已經完成了！
 
 
 - 進入AWS Console-> IAM-> 身分供應商
@@ -51,14 +52,26 @@ GitHub Workflow 是一份 YAML 設定檔，描述「何時」與「如何」自�
   - 選擇Web身分
   - 信任上面的 OIDC Provider。
   - 填妥與你的Github Repo 有關的資訊(Organization 是你的GitHub User name)
-  - 附上最小必要權限以部署（我們直接開到最大）。
+  - 附上最小必要權限以部署（我們直接開到最大 Administrator Access）。
   - 接下來角色名稱等自己填即可!
   
 
-- 複製該 IAM 角色 ARN：貼回 GitHub Actions workflow 指定位置（通常是 `role-to-assume`）。
+- 複製該 IAM 角色 ARN：貼回 GitHub Actions workflow 指定位置（ `role-to-assume`）。
 
 ## 3. 調整設定並部署
 - 調整 `website/config.json`（例如網站標題或必要的設定）。
+- 推送到您的GitHub Repository!
+
+```
+git add website/config.json # 將 config.json 的更新 stash
+git commit -m "修改為貓咪編輯器!" # 輸入適當的 commit message
+git push # 將更新推送到 GitHub
+
+```
+
+回到 GitHub Action 檢查結果
+
+
 - (本地部署必要) 本地先產出前端檔案：
 ```bash
 cd website
