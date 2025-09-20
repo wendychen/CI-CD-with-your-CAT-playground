@@ -22,6 +22,11 @@ pip install -r requirements.txt
 # 初始化 CDK（首次使用需要）
 cdk bootstrap
 
+#將網站靜態資源輸出
+cd website
+npm ci
+npm run build
+
 # 部署到 AWS
 cdk deploy --require-approval never
 ```
@@ -31,17 +36,24 @@ GitHub Workflow 是一份 YAML 設定檔，描述「何時」與「如何」自�
 
 ## 2. 今天的任務（依序完成即可）
 - 準備 GitHub Repo：把專案放到 GitHub（fork 或新建 repo 皆可）。
+- 需要建立自己的repo 來填入 OIDC 的 Trust Policy!
+- 到`https://github.com/new` 創建你的repo
+
 
 - 進入AWS Console-> IAM-> 身分供應商
 - 建立 身分供應商 Identity Provider：
+    - 選擇OpenID Connect   
     - 到 AWS IAM 新增 GitHub OIDC（`https://token.actions.githubusercontent.com`）。
     - Audience 新增 `sts.amazonaws.com`
     - 點擊新增
 
 - 建立 IAM 角色：
+  - 選擇Web身分
   - 信任上面的 OIDC Provider。
   - 填妥與你的Github Repo 有關的資訊(Organization 是你的GitHub User name)
-  - 附上最小必要權限以部署（S3、CloudFormation、CDK 所需）。
+  - 附上最小必要權限以部署（我們直接開到最大）。
+  - 接下來角色名稱等自己填即可!
+  
 
 - 複製該 IAM 角色 ARN：貼回 GitHub Actions workflow 指定位置（通常是 `role-to-assume`）。
 
