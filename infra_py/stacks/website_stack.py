@@ -67,3 +67,13 @@ class WebsiteStack(cdk.Stack):
         )
 
 
+        # ========================================
+        # 📣 部署輸出：S3 靜態網站網址
+        # ========================================
+        cdk.CfnOutput(
+            self,
+            "WebsiteUrl",
+            value=website_bucket.bucket_website_url,
+            description="S3 靜態網站託管網址"
+        )
+

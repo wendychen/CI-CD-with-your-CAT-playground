@@ -1,6 +1,6 @@
 # 🎉 歡迎來到 AWS CDK 工作坊！
 
-> 一起來建立一個可愛的貓咪網站，學習「S3 靜態網站託管 + GitHub Actions CI/CD」的完整流程！（本版本不使用 CloudFront/OAC）
+> 一起來建立一個可愛的貓咪網站，學習「S3 靜態網站託管 + GitHub Actions CI/CD」的完整流程！
 
 ## 🌟 這個工作坊會學到什麼？
 
